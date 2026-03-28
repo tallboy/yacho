@@ -1,6 +1,6 @@
-# yacho 野帳
+# 📓 yacho 野帳
 
-A structured markdown workspace that gives AI assistants persistent context across conversations.
+**Yacho** (野帳 — *yachō*, literally "field notebook") is the pocket-sized survey notebook carried by Japanese engineers and field workers. Small enough for a back pocket, structured enough to be useful under pressure. This project brings that same philosophy to AI-augmented knowledge work — a lightweight, structured markdown workspace that gives AI assistants persistent context across conversations.
 
 ---
 
@@ -25,8 +25,8 @@ After a few sessions, the AI knows your project, your preferences, and your work
 **1. Clone and open**
 
 ```bash
-git clone https://github.com/tallboy/yacho.git my-notebook
-cd my-notebook
+git clone https://github.com/tallboy/yacho.git
+cd yacho
 ```
 
 **2. Open in your AI tool**
@@ -261,6 +261,71 @@ Yacho is designed for individual notebooks. For team use, each person maintains 
 
 **How do I archive old content?**
 Set `status: archived` in frontmatter and move to an `archive/` subfolder. `/notebook-sync` will skip archived files.
+
+**Can I adopt yacho into an existing notebook or Obsidian vault?**
+Yes — see the migration guide below.
+
+---
+
+## Migrating an Existing Notebook
+
+You don't need to start over. Yacho layers onto what you already have.
+
+### Step 1: Add the foundation files
+
+Copy these into your existing notebook or vault root:
+
+```
+CLAUDE.md                        # From yacho — edit to describe your projects
+.claude/commands/notebook-sync.md # The audit command
+.claude/memory/MEMORY.md          # Empty memory index
+templates/                        # Whichever templates you want to use
+```
+
+You can cherry-pick templates. At minimum, grab `priority-tracker.md` and `weekly.md`.
+
+### Step 2: Add frontmatter to your active documents
+
+You don't need to touch every file — just the ones you actively maintain (trackers, plans, weekly logs). Add to the top of each:
+
+```yaml
+---
+type: tracker        # or weekly, reference, etc.
+status: active
+updated: 2026-03-28  # today's date
+project: my-project
+---
+```
+
+This is what `/notebook-sync` reads to detect staleness and drift. Files without frontmatter are simply skipped during audits.
+
+### Step 3: Create your first priority tracker
+
+Copy `templates/priority-tracker.md` into your project directory and fill it in. This becomes the AI's starting point every session.
+
+### Step 4: Adopt the conventions gradually
+
+You don't need to retrofit everything at once:
+
+- **Status indicators** (`[ ]`, `[~]`, `[x]`, `[-]`) — start using them in new docs
+- **Back-to links** (`**Back to:** [[README]]`) — add when you touch a file
+- **Weekly docs** — start next Monday, don't backfill
+- **Cross-linking** — let it emerge naturally as you reference between documents
+
+### Step 5: Run your first audit
+
+```
+/notebook-sync
+```
+
+This will surface stale docs, broken links, and status drift. Don't panic at the initial report — triage the top items and let the rest improve organically over time.
+
+### What NOT to do
+
+- Don't reorganize your entire folder structure to match yacho's layout. Your structure works for you — yacho adapts to it.
+- Don't add frontmatter to every file. Focus on the ~20-50 documents you actively maintain.
+- Don't backfill weekly docs for past weeks. Start fresh from this week forward.
+- Don't delete your existing templates. Keep what works, add yacho templates alongside them.
 
 ---
 
