@@ -1,0 +1,15 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor backups
+*.swp
+*~
+*.bak
+
+# Scratch workspace — ephemeral, never committed
+scratch/
+
+# Obsidian (if using as an Obsidian vault)
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
