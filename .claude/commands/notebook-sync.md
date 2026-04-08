@@ -24,7 +24,7 @@ Group flagged files by their `project` frontmatter value (use "Uncategorized" if
 
 ## Step 3 — Status drift between trackers and weeklies
 
-Find all files named `priority-tracker.md` (any directory depth). For each tracker:
+Find all files with `type: tracker` in their YAML frontmatter (any directory depth). For each tracker:
 1. Locate the nearest sibling or child directory that contains weekly documents (look for directories named `weekly/`, `weeklies/`, or files matching a weekly naming pattern like `Week-NN.md` or `YYYY-WNN.md`).
 2. Identify the most recent weekly document by filename or date.
 3. Parse status indicators in both the tracker and that weekly: `[x]` (done), `[~]` (in-progress), `[ ]` (not started).
