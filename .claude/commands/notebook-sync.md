@@ -1,63 +1,122 @@
 ---
 name: notebook-sync
-description: "Audit the notebook for staleness, broken cross-references, and status drift. Read-only — surfaces candidates for review, makes no changes."
+description: "Weekly review + audit. Checks north star alignment and milestone progress, then audits for staleness, broken links, and status drift. Read-only — surfaces candidates for review, makes no changes."
 allowed-tools: Read Glob Grep
 ---
 
-Perform a read-only audit of this notebook (the repository root). Do NOT create, edit, or delete any files. Only read and report.
+`$ARGUMENTS`
 
-**Stale threshold:** $ARGUMENTS days (default to 14 if not provided or not a number).
+Optional argument: number of days to consider a document stale (default: 14), or `full` to force a deep hygiene audit. Examples: `/notebook-sync`, `/notebook-sync 7`, `/notebook-sync full`
+
+Parse the argument. If it's a number, use it as STALE_DAYS. If it's `full`, set FULL_AUDIT=true and STALE_DAYS=14. Otherwise, default STALE_DAYS=14.
+
+Do NOT create, edit, or delete any files. Only read and report.
+
+---
+
+## Step 0 — North Star Review (always runs)
+
+Read `.claude/memory/north_star.md` if it exists.
+
+Find the most recent weekly doc and the priority tracker.
+
+From these three sources, produce a brief coaching summary:
+
+1. **North star:** Restate the user's 6–12 month goal in one sentence.
+2. **Milestone check:** What is the nearest milestone or deadline visible in the tracker or weekly? How many days away is it?
+3. **Progress pulse:** Summarize the current P0/P1 status — how many items are done `[x]`, in progress `[~]`, and not started `[ ]`?
+4. **On track?** Based on the above, give a one-sentence honest read: are they on pace, behind, or ahead?
+
+Format this as a short block at the top of the report — conversational, not bureaucratic. If no north star memory exists, skip the goal line and just report milestone + progress.
+
+---
 
 ## Step 1 — Inventory
 
-Find all `.md` files in the repository, excluding `.git/`, `.obsidian/`, and `node_modules/` directories. For each file, extract YAML frontmatter fields: `status`, `updated`, `type`, `project`. Skip any file whose `status` frontmatter value is `archived` or whose path contains an `archive`/`archived` directory segment.
+Find all `.md` files in the repository, excluding `.git/`, `.obsidian/`, and `node_modules/` directories. For each file, extract YAML frontmatter fields: `status`, `updated`, `type`, `project`. Skip any file whose `status` is `archived` or whose path contains an `archive`/`archived` directory segment.
 
 Build an in-memory inventory of every non-archived markdown file with its path, frontmatter fields, and last-updated date (from `updated:` frontmatter or inline `**Last updated:**` text).
 
-## Step 2 — Stale document detection
+---
 
-From the inventory, flag any file where:
+## Step 2 — Stale Document Detection
+
+Flag any file where:
 - `status` is `active`, `in-progress`, `draft`, or similar non-terminal value, AND
-- The `updated:` date (or `**Last updated:**` inline date) is older than the stale threshold, OR no date is present at all.
+- The `updated:` date is older than STALE_DAYS, OR no date is present at all
 
-Group flagged files by their `project` frontmatter value (use "Uncategorized" if missing). Sort groups by stalest-first.
+Group flagged files by `project` frontmatter (use "Uncategorized" if missing). Sort groups by stalest-first.
 
-## Step 3 — Status drift between trackers and weeklies
+---
 
-Find all files named `priority-tracker.md` (any directory depth). For each tracker:
-1. Locate the nearest sibling or child directory that contains weekly documents (look for directories named `weekly/`, `weeklies/`, or files matching a weekly naming pattern like `Week-NN.md` or `YYYY-WNN.md`).
-2. Identify the most recent weekly document by filename or date.
-3. Parse status indicators in both the tracker and that weekly: `[x]` (done), `[~]` (in-progress), `[ ]` (not started).
-4. Flag any item that appears in both files but with conflicting status — e.g., marked `[~]` in the tracker but `[x]` in the weekly, or vice versa.
+## Step 3 — Status Drift
 
-## Step 4 — Weekly log continuity
+Find all files with `type: tracker` frontmatter. For each:
+1. Find the most recent weekly document (by filename or `week:` field).
+2. Compare `[~]` in-progress items in the tracker against completed/not-started items in the weekly. Flag conflicts.
+3. Check any `[[wiki-links]]` in the tracker — flag unresolvable targets.
 
-For each set of weekly documents found in Step 3 (and any other sequential weekly series discovered during inventory):
-- Check for gaps in the sequence (e.g., Week-03 exists, Week-05 exists, but Week-04 is missing).
-- In the previous weekly, find items marked `[ ]` (incomplete). Check whether those items appear anywhere in the latest weekly. Flag items that were left incomplete and then dropped without explanation.
+---
 
-## Step 5 — Broken wiki-links
+## Step 4 — Weekly Log Continuity
+
+Find all files with `type: weekly` frontmatter. Sort by filename or `week:` field.
+
+Check for gaps in the sequence. In the second-to-last weekly, find items marked `[ ]` that don't appear in the most recent weekly — flag these as dropped without explanation.
+
+---
+
+## Step 5 — Broken Wiki-Links
 
 Scan every non-archived markdown file for `[[wiki-links]]`. For each link:
-1. Try to resolve the target as a filename match anywhere in the repository (case-insensitive, with or without `.md` extension).
-2. Try to resolve it as a relative path from the linking file's directory.
-3. If neither resolves to an existing file, flag it as broken. Record the source file and line number.
+1. Try to resolve as a filename match anywhere in the repository (case-insensitive, with or without `.md`).
+2. Try to resolve as a relative path from the linking file's directory.
+3. Flag unresolved links with source file and line number.
 
-## Step 6 — Report
+---
 
-Output a single prioritized report in markdown. Include only sections that have findings — omit empty sections entirely.
+## Step 6 — Working Preferences Check
 
-### Sections (in this order):
+Count the number of weekly docs found in Step 4.
 
-1. **Stale Documents** — grouped by project, each entry showing file path, last-updated date, and days since update.
-2. **Status Drift** — each entry showing the tracker file, the weekly file, the item text, and the conflicting statuses.
-3. **Weekly Gaps** — missing weeks and dropped items, grouped by weekly series.
-4. **Broken Links** — each entry showing source file, line number, and the unresolved `[[target]]`.
+If there are **3 or more**, add the following prompt at the end of the report:
 
-Format every flagged item with a checkbox (`- [ ]`) so the list is actionable.
+> **Working preferences check**
+> You've been using this notebook for a few weeks. Is there anything about how I'm working with you that you'd like to change? Any habits I've developed that aren't serving you? Tell me and I'll save it as a feedback memory so it applies from here on.
 
-End the report with a summary line:
+Skip this section entirely if fewer than 3 weekly docs exist.
 
-> Scanned N files. Flagged N items for review.
+---
 
-**Reminder: this is a read-only audit. Make absolutely no changes to any files.**
+## Report Format
+
+Output a single prioritized report. Omit sections with no findings entirely (except Step 0, which always appears).
+
+```
+# Notebook Sync — [today's date]
+
+## Where You Are
+[Step 0 north star + milestone + progress pulse — 3-5 sentences]
+
+## Stale Documents
+- [ ] path/to/file.md — last updated YYYY-MM-DD ([N] days ago)
+
+## Status Drift
+- [ ] "Item text" — [~] in tracker but [x] in weekly-NN
+
+## Weekly Gaps
+- [ ] [description of gap or dropped item]
+
+## Broken Links
+- [ ] source/file.md:42 → [[broken-target]] — not found
+
+---
+[Working preferences check — only if 3+ weeklies]
+
+---
+Scanned N files. Flagged N items for review.
+```
+
+Keep the report tight — actionable in under 5 minutes.
+
+**Reminder: read-only. Make no changes to any files.**
