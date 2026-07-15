@@ -61,7 +61,9 @@ yacho/
 │   ├── memory/
 │   │   └── MEMORY.md              # Persistent memory index
 │   └── commands/
-│       └── notebook-sync.md       # Weekly audit command
+│       ├── setup.md               # /setup — guided onboarding walkthrough
+│       ├── notebook-sync.md       # /notebook-sync — weekly review + audit
+│       └── compose.md             # /compose — draft messages as clean HTML for Outlook/Teams
 ├── templates/
 │   ├── weekly.md                  # Weekly planning
 │   ├── daily-log.md               # Daily log with time tiers
@@ -156,24 +158,51 @@ Memories are indexed in `.claude/memory/MEMORY.md`. The AI reads this at the sta
 
 ## Commands
 
-### `/notebook-sync`
+### `/setup`
 
-Read-only audit of your notebook. Flags issues without making changes.
+Guided 15-minute onboarding walkthrough. Run this when you first open the notebook.
 
 ```
-/notebook-sync        # default: flag docs not updated in 14+ days
+/setup
+/setup job search, pre-med senior    # pass context to skip early questions
+```
+
+**What it does:**
+- Brain dump → sorts everything on your plate into a priority tracker
+- North star → captures your 6–12 month goal, referenced every sync
+- Builds your first weekly doc and reference sheet during the session
+- Captures your working style as a persistent memory
+- Tours `CLAUDE.md` after you've experienced the system
+
+### `/notebook-sync`
+
+Weekly review + audit. Run this at the start of each week.
+
+```
+/notebook-sync        # north star check + full audit (14-day stale threshold)
 /notebook-sync 7      # stricter: 7-day threshold
 ```
 
 **What it checks:**
+- **North star alignment** — progress pulse against your milestone (always runs first)
 - Stale documents (active but not updated recently)
-- Status drift (priority tracker says "in progress" but weekly says "done")
-- Weekly log gaps (missing weeks, incomplete items that disappeared)
-- Broken wiki-links (targets that don't exist)
+- Status drift (tracker says "in progress" but weekly says "done")
+- Weekly log gaps (missing weeks, dropped items)
+- Broken wiki-links
 
 **Output:** A prioritized checklist you can work through in under 5 minutes.
 
-Run this weekly, or after a burst of edits.
+### `/compose`
+
+Draft a message and output it as a clean HTML file for copy-pasting into Outlook or Teams — no dark-theme artifacts, no formatting surprises.
+
+```
+/compose follow-up email to my manager about last week's outcomes
+/compose Teams message summarizing this week's priorities
+/compose meeting invite for Friday planning session
+```
+
+Opens `scratch/compose-output.html`. Open in any browser → Select All → Copy → Paste.
 
 ---
 
