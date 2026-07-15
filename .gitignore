@@ -10,6 +10,10 @@ Thumbs.db
 # Scratch workspace — ephemeral, never committed
 scratch/
 
+# Memory files are personal — ignore individual entries, keep the MEMORY.md index template
+.claude/memory/*.md
+!.claude/memory/MEMORY.md
+
 # Obsidian (if using as an Obsidian vault)
 .obsidian/workspace.json
 .obsidian/workspace-mobile.json
