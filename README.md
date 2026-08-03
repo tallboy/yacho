@@ -63,6 +63,8 @@ yacho/
 │   └── commands/
 │       ├── setup.md               # /setup — guided onboarding walkthrough
 │       ├── notebook-sync.md       # /notebook-sync — weekly review + audit
+│       ├── memory-doctor.md       # /memory-doctor — find + fix stale memory entries
+│       ├── repo-progress.md       # /repo-progress — checkbox gauge + git/gh activity report
 │       └── compose.md             # /compose — draft messages as clean HTML for Outlook/Teams
 ├── templates/
 │   ├── weekly.md                  # Weekly planning
@@ -71,7 +73,8 @@ yacho/
 │   ├── reference-sheet.md         # Dense lookup tables
 │   ├── issue-catalog.md           # Troubleshooting log
 │   ├── runbook.md                 # Step-by-step procedures
-│   └── work-tracker.md            # Atomic implementation steps
+│   ├── work-tracker.md            # Atomic implementation steps
+│   └── mcp-connectors.md          # Status board for connected tools (M365, Google, Slack, etc.)
 ├── examples/
 │   ├── student/                   # Filled-in example: college student
 │   └── multi-project/             # Filled-in example: working professional
@@ -95,6 +98,7 @@ yacho/
 | **[reference-sheet](templates/reference-sheet.md)** | Dense, scannable lookup tables. Tables over prose. | When you encounter stable facts worth recording. |
 | **[issue-catalog](templates/issue-catalog.md)** | Troubleshooting log: symptom → root cause → fix → prevention. | When a problem is diagnosed and resolved. |
 | **[runbook](templates/runbook.md)** | Step-by-step procedure with pre-flight checks and validation. | When a process is validated end-to-end. |
+| **[mcp-connectors](templates/mcp-connectors.md)** | Status board of which tools (M365, Google Workspace, Slack, GitHub, ITSM, etc.) are actually connected. | Once, then whenever you add or lose a connector. |
 
 ---
 
@@ -191,6 +195,32 @@ Weekly review + audit. Run this at the start of each week.
 - Broken wiki-links
 
 **Output:** A prioritized checklist you can work through in under 5 minutes.
+
+### `/memory-doctor`
+
+Finds memory entries that were true when written but aren't anymore — a workaround for a bug that's since been fixed, a fact that's since changed — and corrects them. Never deletes; corrections supersede via a visible prefix so the history stays intact.
+
+```
+/memory-doctor              # scan everything
+/memory-doctor servicenow   # scope the scan to one topic
+```
+
+**What it does:**
+- Flags absolute/testable claims ("doesn't work", "must use X instead", "read-only") and time-sensitive facts (org/people state)
+- Verifies testable claims directly (does the referenced file/command/tool still behave as described?)
+- Reports Confirmed Stale / Likely Stale / Conflicts / Still Valid
+- Only edits after you confirm which corrections to apply
+
+### `/repo-progress`
+
+Generates a shareable progress report: a checkbox-completion gauge parsed straight out of a tracker/PRD/TODO file, plus optional git/gh activity if the target is a code repo.
+
+```
+/repo-progress priority-tracker.md
+/repo-progress ~/code/yacho --days 7 --author tallboy
+```
+
+**Output:** An ASCII completion gauge (`[███████████░░░░░░░░░]  XX%`) broken down by section, plus commits/merged PRs/closed issues in the window if it's a repo. Pipe into `/compose` for a Teams-pasteable version.
 
 ### `/compose`
 

@@ -94,6 +94,8 @@ Index all memories in `.claude/memory/MEMORY.md`.
 ## Commands
 
 - **`/notebook-sync`** — Read-only audit. Flags stale docs, broken links, status drift, and weekly gaps. Run weekly.
+- **`/memory-doctor`** — Finds memory entries that were true when written but have since gone stale, verifies against current state, and corrects them (never deletes — corrections supersede via a visible prefix).
+- **`/repo-progress`** — Checkbox-completion gauge from a tracker/PRD/TODO file, plus optional git/gh activity if pointed at a code repo. Good for status updates.
 
 ## Maintenance Cadence
 
