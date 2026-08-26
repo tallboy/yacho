@@ -93,9 +93,23 @@ Index all memories in `.claude/memory/MEMORY.md`.
 
 ## Commands
 
+Using the notebook:
+
+- **`/setup`** — Guided onboarding walkthrough. Brain dump, north star, first tracker and weekly doc.
 - **`/notebook-sync`** — Read-only audit. Flags stale docs, broken links, status drift, and weekly gaps. Run weekly.
 - **`/memory-doctor`** — Finds memory entries that were true when written but have since gone stale, verifies against current state, and corrects them (never deletes — corrections supersede via a visible prefix).
 - **`/repo-progress`** — Checkbox-completion gauge from a tracker/PRD/TODO file, plus optional git/gh activity if pointed at a code repo. Good for status updates.
+- **`/compose`** — Drafts a message as clean HTML for pasting into Outlook or Teams.
+- **`/unslop`** — Cuts AI tells from a piece of writing. Run it on anything a person will read: a weekly review, an issue catalog entry, a drafted message.
+
+Working on the framework itself (editing commands, templates, conventions):
+
+- **`/yacho-mode`** — Routes a task to the right playbook and turns it into the session's todo list. Start here.
+- **`/log-work`** — Append-only TSV decision trail under `scratch/decisions/` for long or unattended work.
+- **`/verify-this`** — Proves or disproves one specific claim with fresh evidence. Returns VERIFIED, NOT VERIFIED, or INCONCLUSIVE.
+- **`/blast-radius`** — Finds what a change to a command, template, or convention breaks somewhere else.
+
+`.claude/commands/README.md` has the full list and shows how they chain.
 
 ## Maintenance Cadence
 

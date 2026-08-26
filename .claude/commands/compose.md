@@ -21,6 +21,8 @@ If the arguments describe what to write, draft the message using relevant contex
 
 Keep the tone professional but direct. Match the register to the audience — internal teammate vs. executive vs. customer.
 
+Before writing the file, run the draft through `/unslop`. This message is going to a named human who knows how you write, so the AI tells are more costly here than anywhere else in the notebook — puffery, "I hope this helps", and sentences that say how something feels instead of what it does. Fix them in the draft, not after it is pasted into Outlook.
+
 ---
 
 ## Step 2: Write the HTML File
