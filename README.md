@@ -60,12 +60,23 @@ yacho/
 ├── .claude/
 │   ├── memory/
 │   │   └── MEMORY.md              # Persistent memory index
+│   ├── scripts/
+│   │   └── log.sh                 # row-appender used by /log-work
+│   ├── references/
+│   │   └── decision-log-template.tsv
 │   └── commands/
+│       ├── README.md              # every command + how they chain
 │       ├── setup.md               # /setup — guided onboarding walkthrough
 │       ├── notebook-sync.md       # /notebook-sync — weekly review + audit
 │       ├── memory-doctor.md       # /memory-doctor — find + fix stale memory entries
 │       ├── repo-progress.md       # /repo-progress — checkbox gauge + git/gh activity report
-│       └── compose.md             # /compose — draft messages as clean HTML for Outlook/Teams
+│       ├── compose.md             # /compose — draft messages as clean HTML for Outlook/Teams
+│       ├── unslop.md              # /unslop — cut AI tells from a piece of writing
+│       ├── yacho-mode.md          # /yacho-mode — route a framework task to a playbook
+│       ├── yacho-mode/playbooks/  # command-change, convention-change, investigation
+│       ├── log-work.md            # /log-work — append-only decision trail
+│       ├── verify-this.md         # /verify-this — prove or disprove one claim
+│       └── blast-radius.md        # /blast-radius — what a convention change breaks
 ├── templates/
 │   ├── weekly.md                  # Weekly planning
 │   ├── daily-log.md               # Daily log with time tiers
@@ -233,6 +244,48 @@ Draft a message and output it as a clean HTML file for copy-pasting into Outlook
 ```
 
 Opens `scratch/compose-output.html`. Open in any browser → Select All → Copy → Paste.
+
+### `/unslop`
+
+Cuts AI tells from a piece of writing and puts a human voice back in. Run it on anything a person will actually read.
+
+```
+/unslop weekly/2026-W14.md
+/unslop issues/deploy-failures.md
+```
+
+Catches puffery, chatbot filler, and the big one — sentences that say how something feels instead of what it does. `/compose` runs it on every draft before writing the HTML.
+
+---
+
+## Working on yacho itself
+
+These four are for editing the framework — commands, templates, conventions. Skip them if you are just using your notebook.
+
+### `/yacho-mode`
+
+Routes a task to the right playbook and turns that playbook into the session's todo list. Start here for any change to the framework.
+
+```
+/yacho-mode add a "blocked" status symbol
+/yacho-mode why does notebook-sync miss my tracker
+```
+
+Three playbooks: **convention-change** (frontmatter, status symbols, links, templates), **command-change** (a new or changed slash command), and **investigation** (a read-only question).
+
+### `/log-work`
+
+Append-only TSV decision trail under `scratch/decisions/` — one row per decision, with what, why, the evidence, and the result. For work that runs long or unattended and gets reviewed afterwards.
+
+### `/verify-this`
+
+Proves or disproves one specific claim with fresh evidence, then returns VERIFIED, NOT VERIFIED, or INCONCLUSIVE. Yacho has no test suite, so the evidence is shell commands over markdown plus running a command against the `examples/` fixtures.
+
+### `/blast-radius`
+
+Finds what a change breaks somewhere else. Worth running before any convention change: the conventions are an unenforced contract between the templates that write documents and the commands that read them, and breaking half of it fails silently.
+
+Full list and how they chain: [`.claude/commands/README.md`](.claude/commands/README.md).
 
 ---
 
